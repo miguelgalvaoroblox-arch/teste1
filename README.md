@@ -74,7 +74,6 @@ end
 local gui = Instance.new("ScreenGui")
 gui.Name = "MgzHub"
 gui.ResetOnSpawn = false
-gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.Parent = game:GetService("CoreGui")
 
 --------------------------------------------------
@@ -82,10 +81,16 @@ gui.Parent = game:GetService("CoreGui")
 --------------------------------------------------
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0,280,0,220)
+frame.Size = UDim2.new(0,0,0,0)
 frame.Position = UDim2.new(0,120,0,120)
-frame.BackgroundColor3 = Color3.fromRGB(18,18,25)
+frame.BackgroundColor3 = Color3.fromRGB(25,0,0)
 frame.Parent = gui
+
+TweenService:Create(
+frame,
+TweenInfo.new(0.5,Enum.EasingStyle.Quad),
+{Size = UDim2.new(0,320,0,270)}
+):Play()
 
 local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0,12)
@@ -93,8 +98,16 @@ corner.Parent = frame
 
 local stroke = Instance.new("UIStroke")
 stroke.Thickness = 2
-stroke.Color = Color3.fromRGB(0,170,255)
+stroke.Color = Color3.fromRGB(255,0,0)
 stroke.Parent = frame
+
+local gradient = Instance.new("UIGradient")
+gradient.Color = ColorSequence.new{
+ColorSequenceKeypoint.new(0,Color3.fromRGB(120,0,0)),
+ColorSequenceKeypoint.new(1,Color3.fromRGB(30,0,0))
+}
+gradient.Rotation = 90
+gradient.Parent = frame
 
 --------------------------------------------------
 -- MOBILE BUTTON
@@ -103,7 +116,7 @@ stroke.Parent = frame
 local openButton = Instance.new("TextButton")
 openButton.Size = UDim2.new(0,60,0,60)
 openButton.Position = UDim2.new(0,20,0.5,-30)
-openButton.BackgroundColor3 = Color3.fromRGB(40,40,40)
+openButton.BackgroundColor3 = Color3.fromRGB(120,0,0)
 openButton.Text = "MGZ"
 openButton.TextColor3 = Color3.new(1,1,1)
 openButton.Font = Enum.Font.GothamBold
@@ -139,10 +152,10 @@ end)
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1,0,0,35)
 title.BackgroundTransparency = 1
-title.Text = "🌪 MGZ HUB"
+title.Text = "🔥 MGZ HUB"
 title.Font = Enum.Font.GothamBold
-title.TextSize = 20
-title.TextColor3 = Color3.fromRGB(0,200,255)
+title.TextSize = 22
+title.TextColor3 = Color3.fromRGB(255,60,60)
 title.Parent = frame
 
 --------------------------------------------------
@@ -155,7 +168,7 @@ minimize.Position = UDim2.new(1,-35,0,5)
 minimize.Text = "-"
 minimize.Font = Enum.Font.GothamBold
 minimize.TextSize = 18
-minimize.BackgroundColor3 = Color3.fromRGB(35,35,45)
+minimize.BackgroundColor3 = Color3.fromRGB(60,0,0)
 minimize.TextColor3 = Color3.new(1,1,1)
 minimize.Parent = frame
 
@@ -197,9 +210,9 @@ end)
 local function CreateButton(text,pos)
 
 local button = Instance.new("TextButton")
-button.Size = UDim2.new(0.9,0,0,32)
+button.Size = UDim2.new(0.9,0,0,35)
 button.Position = UDim2.new(0.05,0,0,pos)
-button.BackgroundColor3 = Color3.fromRGB(35,35,45)
+button.BackgroundColor3 = Color3.fromRGB(70,0,0)
 button.Font = Enum.Font.GothamBold
 button.TextSize = 15
 button.TextColor3 = Color3.new(1,1,1)
@@ -210,15 +223,23 @@ local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0,8)
 corner.Parent = button
 
+button.MouseEnter:Connect(function()
+TweenService:Create(button,TweenInfo.new(0.2),{BackgroundColor3 = Color3.fromRGB(120,0,0)}):Play()
+end)
+
+button.MouseLeave:Connect(function()
+TweenService:Create(button,TweenInfo.new(0.2),{BackgroundColor3 = Color3.fromRGB(70,0,0)}):Play()
+end)
+
 return button
 
 end
 
 --------------------------------------------------
--- FULLBRIGHT BUTTON
+-- FULLBRIGHT
 --------------------------------------------------
 
-local fbButton = CreateButton("FULLBRIGHT: OFF",75)
+local fbButton = CreateButton("FULLBRIGHT: OFF",80)
 
 fbButton.MouseButton1Click:Connect(function()
 
@@ -240,7 +261,7 @@ end)
 
 local espObjects = {}
 
-local espButton = CreateButton("ESP: OFF",115)
+local espButton = CreateButton("ESP: OFF",125)
 
 espButton.MouseButton1Click:Connect(function()
 
@@ -284,7 +305,7 @@ end)
 --------------------------------------------------
 
 local camera = workspace.CurrentCamera
-local freecamButton = CreateButton("FREECAM: OFF",155)
+local freecamButton = CreateButton("FREECAM: OFF",170)
 
 local speed = 2
 local sensitivity = 0.25
@@ -365,10 +386,10 @@ end
 end)
 
 --------------------------------------------------
--- PERFORMANCE BUTTON
+-- PERFORMANCE
 --------------------------------------------------
 
-local perfButton = CreateButton("PERFORMANCE: OFF",195)
+local perfButton = CreateButton("PERFORMANCE: OFF",215)
 
 perfButton.MouseButton1Click:Connect(function()
 
@@ -400,9 +421,9 @@ end
 end
 
 if minimized then
-frame.Size = UDim2.new(0,280,0,40)
+frame.Size = UDim2.new(0,320,0,40)
 else
-frame.Size = UDim2.new(0,280,0,220)
+frame.Size = UDim2.new(0,320,0,270)
 end
 
 end)
