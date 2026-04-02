@@ -5,14 +5,16 @@ local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
 local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
 
 local LocalPlayer = Players.LocalPlayer or Players.PlayerAdded:Wait()
 
 local FullBright = false
 local ESP = false
+local FreeCam = false
 
 --------------------------------------------------
--- FULLBRIGHT / ANTI FOG (NÃO MODIFICADO)
+-- FULLBRIGHT / ANTI FOG
 --------------------------------------------------
 
 local function EnableFullBright()
@@ -53,10 +55,16 @@ gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.Parent = game:GetService("CoreGui")
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0,280,0,190)
+frame.Size = UDim2.new(0,0,0,0)
 frame.Position = UDim2.new(0,120,0,120)
 frame.BackgroundColor3 = Color3.fromRGB(18,18,25)
 frame.Parent = gui
+
+TweenService:Create(
+    frame,
+    TweenInfo.new(0.4,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),
+    {Size = UDim2.new(0,280,0,190)}
+):Play()
 
 local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0,12)
@@ -79,6 +87,26 @@ title.Font = Enum.Font.GothamBold
 title.TextSize = 20
 title.TextColor3 = Color3.fromRGB(0,200,255)
 title.Parent = frame
+
+--------------------------------------------------
+-- MINIMIZE BUTTON
+--------------------------------------------------
+
+local minimize = Instance.new("TextButton")
+minimize.Size = UDim2.new(0,30,0,25)
+minimize.Position = UDim2.new(1,-35,0,5)
+minimize.Text = "-"
+minimize.Font = Enum.Font.GothamBold
+minimize.TextSize = 18
+minimize.BackgroundColor3 = Color3.fromRGB(35,35,45)
+minimize.TextColor3 = Color3.new(1,1,1)
+minimize.Parent = frame
+
+local miniCorner = Instance.new("UICorner")
+miniCorner.CornerRadius = UDim.new(0,6)
+miniCorner.Parent = minimize
+
+local minimized = false
 
 --------------------------------------------------
 -- DRAG SYSTEM
@@ -198,7 +226,7 @@ fbButton.MouseButton1Click:Connect(function()
 end)
 
 --------------------------------------------------
--- ESP (NÃO MODIFICADO)
+-- ESP
 --------------------------------------------------
 
 local espObjects = {}
@@ -268,6 +296,93 @@ espButton.MouseButton1Click:Connect(function()
         end
 
         espObjects = {}
+
+    end
+
+end)
+
+--------------------------------------------------
+-- FREECAM
+--------------------------------------------------
+
+local camera = workspace.CurrentCamera
+local speed = 2
+
+RunService.RenderStepped:Connect(function()
+
+    if FreeCam then
+
+        if UIS:IsKeyDown(Enum.KeyCode.W) then
+            camera.CFrame = camera.CFrame + camera.CFrame.LookVector * speed
+        end
+
+        if UIS:IsKeyDown(Enum.KeyCode.S) then
+            camera.CFrame = camera.CFrame - camera.CFrame.LookVector * speed
+        end
+
+        if UIS:IsKeyDown(Enum.KeyCode.A) then
+            camera.CFrame = camera.CFrame - camera.CFrame.RightVector * speed
+        end
+
+        if UIS:IsKeyDown(Enum.KeyCode.D) then
+            camera.CFrame = camera.CFrame + camera.CFrame.RightVector * speed
+        end
+
+        if UIS:IsKeyDown(Enum.KeyCode.Space) then
+            camera.CFrame = camera.CFrame + Vector3.new(0,speed,0)
+        end
+
+        if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then
+            camera.CFrame = camera.CFrame - Vector3.new(0,speed,0)
+        end
+
+    end
+
+end)
+
+local freecamButton = CreateButton("FREECAM: OFF",155)
+
+freecamButton.MouseButton1Click:Connect(function()
+
+    FreeCam = not FreeCam
+
+    if FreeCam then
+        freecamButton.Text = "FREECAM: ON"
+        camera.CameraType = Enum.CameraType.Scriptable
+    else
+        freecamButton.Text = "FREECAM: OFF"
+        camera.CameraType = Enum.CameraType.Custom
+    end
+
+end)
+
+--------------------------------------------------
+-- MINIMIZE FUNCTION
+--------------------------------------------------
+
+minimize.MouseButton1Click:Connect(function()
+
+    minimized = not minimized
+
+    if minimized then
+
+        for _,v in pairs(frame:GetChildren()) do
+            if v:IsA("TextButton") or v:IsA("TextLabel") then
+                if v ~= title and v ~= minimize then
+                    v.Visible = false
+                end
+            end
+        end
+
+        frame.Size = UDim2.new(0,280,0,40)
+
+    else
+
+        for _,v in pairs(frame:GetChildren()) do
+            v.Visible = true
+        end
+
+        frame.Size = UDim2.new(0,280,0,190)
 
     end
 
